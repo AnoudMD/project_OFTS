@@ -1,0 +1,9 @@
+{
+  "name": "authority-server",
+  "version": "1.0.0",
+  "description": "Mock authority verification server",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js"
+  }
+}

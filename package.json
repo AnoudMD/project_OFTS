@@ -1,12 +1,12 @@
 {
   "name": "project_ofts",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "OFTS backend MVP",
+  "main": "server.js",
   "scripts": {
-  "dev": "nodemon server.js",
-  "start": "node server.js"
-},
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AnoudMD/project_OFTS.git"
@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/AnoudMD/project_OFTS#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "multer": "^2.1.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
