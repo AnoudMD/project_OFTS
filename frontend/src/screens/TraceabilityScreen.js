@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from 'reactnative';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from 'react-native';
 import StatusBadge from '../components/StatusBadge';
 25
 export default function TraceabilityScreen({ route }) {
