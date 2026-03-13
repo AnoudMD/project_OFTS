@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Environment — NEVER commit this
+.env
+
+# Uploaded certification documents
+uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

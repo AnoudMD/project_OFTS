@@ -1,94 +1,34 @@
 const express = require('express');
-const { v4: uuidv4 } = require('uuid');
-const Batch = require('../models/Batch');
-const auth = require('../middleware/auth');
-const allowRoles = require('../middleware/roles');
-const upload = require('../middleware/upload');
-const { generateBatchQr } = require('../utils/qr');
-
 const router = express.Router();
+const {
+  createBatch,
+  listBatches,
+  getBatch,
+  getBatchByCode,
+  updateBatch,
+  certifyBatch,
+} = require('../controllers/batch.controller');
+const { protect, optionalAuth } = require('../middleware/auth.middleware');
+const { authorize } = require('../middleware/role.middleware');
 
-router.post(
-  '/',
-  auth,
-  allowRoles('Producer'),
-  upload.array('documents', 5),
-  async (req, res) => {
-    try {
-      const { productName, farmName, productionDate, expiryDate, notes } = req.body;
-      const batchId = `OFTS-${uuidv4().slice(0, 8).toUpperCase()}`;
-      const qrPayload = `${process.env.BASE_URL}/api/trace/${batchId}`;
-      const qrCodeUrl = await generateBatchQr(qrPayload);
+// NOTE: specific routes must be declared before parameterized ones
 
-      const documents = (req.files || []).map((file) => ({
-        originalName: file.originalname,
-        fileName: file.filename,
-        filePath: `/uploads/${file.filename}`,
-        mimeType: file.mimetype,
-      }));
+// GET /api/batches/code/:batchCode — public (no auth required for consumer scan)
+router.get('/code/:batchCode', optionalAuth, getBatchByCode);
 
-      const batch = await Batch.create({
-        batchId,
-        productName,
-        farmName,
-        productionDate,
-        expiryDate,
-        notes,
-        certificationDocuments: documents,
-        qrCodeUrl,
-        createdBy: req.user._id,
-      });
+// GET /api/batches — list all (authenticated)
+router.get('/', protect, listBatches);
 
-      res.status(201).json(batch);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-);
+// POST /api/batches — create (producer only)
+router.post('/', protect, authorize('producer'), createBatch);
 
-router.get('/', auth, async (req, res) => {
-  try {
-    const batches = await Batch.find().sort({ createdAt: -1 });
-    res.json(batches);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// GET /api/batches/:id
+router.get('/:id', protect, getBatch);
 
-router.get('/pending', auth, allowRoles('Certifier'), async (_req, res) => {
-  try {
-    const batches = await Batch.find({ status: 'Pending' }).sort({ createdAt: -1 });
-    res.json(batches);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// PATCH /api/batches/:id
+router.patch('/:id', protect, authorize('producer', 'certifier'), updateBatch);
 
-router.patch('/:batchId/review', auth, allowRoles('Certifier'), async (req, res) => {
-  try {
-    const { status, rejectionReason } = req.body;
-    const batch = await Batch.findOne({ batchId: req.params.batchId });
-    if (!batch) return res.status(404).json({ message: 'Batch not found' });
-
-    if (status === 'Approved') {
-      batch.status = 'Approved';
-      batch.certificationStatus = 'Certified Organic';
-      batch.approvedBy = req.user._id;
-      batch.rejectionReason = '';
-    } else if (status === 'Rejected') {
-      batch.status = 'Rejected';
-      batch.certificationStatus = 'Rejected';
-      batch.approvedBy = req.user._id;
-      batch.rejectionReason = rejectionReason || 'Rejected by certifier';
-    } else {
-      return res.status(400).json({ message: 'Invalid status' });
-    }
-
-    await batch.save();
-    res.json(batch);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// POST /api/batches/:id/certify — certifier only
+router.post('/:id/certify', protect, authorize('certifier'), certifyBatch);
 
 module.exports = router;

@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "OFTS",
+    "slug": "ofts-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#166534"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ofts.mobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "OFTS uses the camera to scan QR codes on organic product packaging.",
+        "NSPhotoLibraryUsageDescription": "OFTS accesses your photo library to upload certification documents."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#166534"
+      },
+      "package": "com.ofts.mobile",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "OFTS uses the camera to scan QR codes on product packaging."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "OFTS accesses your photos to upload certification documents."
+        }
+      ]
+    ]
+  }
+}
