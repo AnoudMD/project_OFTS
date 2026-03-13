@@ -20,26 +20,35 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Lookup" component={ConsumerLookupScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="QrScanner" component={QrScannerScreen} options={{ title: 'Scan QR' }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Supply Chain Login' }} />
-        <Stack.Screen name="Traceability" component={TraceabilityScreen} />
-        <Stack.Screen name="BatchHistory" component={BatchHistoryScreen} />
-        <Stack.Screen name="Dashboard" component={DashboardScreen} />
+      {user ? (
+        <Stack.Navigator initialRouteName="Dashboard">
+          <Stack.Screen name="Dashboard" component={DashboardScreen} />
+          <Stack.Screen name="Lookup" component={ConsumerLookupScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="QrScanner" component={QrScannerScreen} options={{ title: 'Scan QR' }} />
+          <Stack.Screen name="Traceability" component={TraceabilityScreen} />
+          <Stack.Screen name="BatchHistory" component={BatchHistoryScreen} />
 
-        {user?.role === 'Producer' && (
-          <Stack.Screen name="CreateBatch" component={CreateBatchScreen} />
-        )}
+          {user?.role === 'Producer' && (
+            <Stack.Screen name="CreateBatch" component={CreateBatchScreen} />
+          )}
 
-        {['Producer', 'Distributor', 'Retailer'].includes(user?.role) && (
-          <Stack.Screen name="AddEvent" component={AddEventScreen} />
-        )}
+          {['Producer', 'Distributor', 'Retailer'].includes(user?.role) && (
+            <Stack.Screen name="AddEvent" component={AddEventScreen} />
+          )}
 
-        {user?.role === 'Certifier' && (
-          <Stack.Screen name="CertifierReview" component={CertifierReviewScreen} />
-        )}
-      </Stack.Navigator>
+          {user?.role === 'Certifier' && (
+            <Stack.Screen name="CertifierReview" component={CertifierReviewScreen} />
+          )}
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Supply Chain Login' }} />
+          <Stack.Screen name="Lookup" component={ConsumerLookupScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="QrScanner" component={QrScannerScreen} options={{ title: 'Scan QR' }} />
+          <Stack.Screen name="Traceability" component={TraceabilityScreen} />
+          <Stack.Screen name="BatchHistory" component={BatchHistoryScreen} />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 }

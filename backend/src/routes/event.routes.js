@@ -1,35 +1,21 @@
 const express = require('express');
-const auth = require('../middleware/auth');
-const allowRoles = require('../middleware/roles');
-const Batch = require('../models/Batch');
-const SupplyChainEvent = require('../models/SupplyChainEvent');
-
 const router = express.Router();
+const { addEvent, getEvents, updateEvent, deleteEvent } = require('../controllers/event.controller');
+const { protect } = require('../middleware/auth.middleware');
+const { authorize } = require('../middleware/role.middleware');
 
-router.post('/', auth, allowRoles('Producer', 'Distributor', 'Retailer'), async (req, res) => {
-  try {
-    const { batchId, eventType, location, eventDateTime, notes } = req.body;
+const EVENT_ROLES = ['producer', 'certifier', 'distributor', 'retailer'];
 
-    const batch = await Batch.findOne({ batchId });
-    if (!batch) return res.status(404).json({ message: 'Batch not found' });
-    if (batch.status !== 'Approved') {
-      return res.status(400).json({ message: 'Only approved batches can receive supply-chain events' });
-    }
+// POST /api/events — add event to a batch
+router.post('/', protect, authorize(...EVENT_ROLES), addEvent);
 
-    const event = await SupplyChainEvent.create({
-      batch: batch._id,
-      eventType,
-      location,
-      eventDateTime,
-      notes,
-      createdBy: req.user._id,
-      role: req.user.role,
-    });
+// GET /api/events/:batchId — get all events for a batch (any authenticated user)
+router.get('/:batchId', protect, getEvents);
 
-    res.status(201).json(event);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// PATCH /api/events/:id
+router.patch('/:id', protect, authorize(...EVENT_ROLES), updateEvent);
+
+// DELETE /api/events/:id
+router.delete('/:id', protect, authorize(...EVENT_ROLES), deleteEvent);
 
 module.exports = router;
