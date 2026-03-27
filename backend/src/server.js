@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth.routes');
 const batchRoutes = require('./routes/batch.routes');
 const eventRoutes = require('./routes/event.routes');
 const traceRoutes = require('./routes/trace.routes');
+const ipfsBlockchainRoutes = require('./routes/ipfsBlockchain.routes');
 
 connectDB();
 
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/batches', batchRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/trace', traceRoutes);
+app.use('/api/ipfs-blockchain', ipfsBlockchainRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
