@@ -1,4 +1,3 @@
-export const API_BASE_URL = 'http://192.168.1.10:5001/api';
+export const API_BASE_URL = 'https://fatigable-psychologically-stefani.ngrok-free.app/api';
 export const ROLES = ['Producer', 'Certifier', 'Distributor', 'Retailer'];
-export const EVENT_TYPES = ['Harvest', 'Processing', 'Quality Check',
-'Packaging', 'Shipment', 'Distribution'];
+export const EVENT_TYPES = ['Harvest', 'Processing', 'Quality Check', 'Packaging', 'Shipment', 'Distribution'];

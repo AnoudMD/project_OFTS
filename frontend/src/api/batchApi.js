@@ -17,3 +17,12 @@ export const addSupplyChainEventApi = async (payload) => {
 const { data } = await client.post('/events', payload);
 return data;
 };
+export const getBatchByIdApi = async (batchId) => {
+  const { data } = await client.get(`/batches/${batchId}`);
+  return data;
+};
+
+export const getEventsByBatchApi = async (batchId) => {
+  const { data } = await client.get(`/events/${batchId}`);
+  return data;
+};

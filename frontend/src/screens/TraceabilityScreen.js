@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from 'react-native';
 import StatusBadge from '../components/StatusBadge';
-25
+
 export default function TraceabilityScreen({ route }) {
 const { traceData } = route.params;
 const { batch, events } = traceData;
@@ -45,7 +45,7 @@ subheader: { color: '#4A5568', marginTop: 8, marginBottom: 16 },
 card: { backgroundColor: '#fff', borderRadius: 16, padding: 16, borderWidth:
 1, borderColor: '#EAEAEA' },
 section: { fontSize: 24, fontWeight: '800', color: '#0AA329', marginVertical:
-2612 },
+12 },
 row: { marginTop: 6, fontSize: 16 },
 key: { fontWeight: '800' },
 qr: { width: 180, height: 180, marginTop: 16, alignSelf: 'center' },

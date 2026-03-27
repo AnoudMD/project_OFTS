@@ -1,3 +1,4 @@
+const validateBatch = require('../middleware/validateBatch');
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const Batch = require('../models/Batch');
@@ -13,6 +14,7 @@ router.post(
   auth,
   allowRoles('Producer'),
   upload.array('documents', 5),
+  validateBatch, 
   async (req, res) => {
     try {
       const { productName, farmName, productionDate, expiryDate, notes } = req.body;
@@ -85,6 +87,17 @@ router.patch('/:batchId/review', auth, allowRoles('Certifier'), async (req, res)
     }
 
     await batch.save();
+    res.json(batch);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+router.get('/:batchId', auth, async (req, res) => {
+  try {
+    const batch = await Batch.findOne({ batchId: req.params.batchId })
+      .populate('createdBy', 'name email role')
+      .populate('approvedBy', 'name email role');
+    if (!batch) return res.status(404).json({ message: 'Batch not found' });
     res.json(batch);
   } catch (error) {
     res.status(500).json({ message: error.message });

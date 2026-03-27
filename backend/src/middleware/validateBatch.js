@@ -9,4 +9,3 @@ return res.status(400).json({ message:
 }
 next();
 };
-const validateBatch = require('../middleware/validateBatch');

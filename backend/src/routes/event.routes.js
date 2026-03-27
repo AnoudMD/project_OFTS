@@ -5,7 +5,18 @@ const Batch = require('../models/Batch');
 const SupplyChainEvent = require('../models/SupplyChainEvent');
 
 const router = express.Router();
-
+router.get('/:batchId', auth, async (req, res) => {
+  try {
+    const batch = await Batch.findOne({ batchId: req.params.batchId });
+    if (!batch) return res.status(404).json({ message: 'Batch not found' });
+    const events = await SupplyChainEvent.find({ batch: batch._id })
+      .populate('createdBy', 'name role')
+      .sort({ eventDateTime: 1 });
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 router.post('/', auth, allowRoles('Producer', 'Distributor', 'Retailer'), async (req, res) => {
   try {
     const { batchId, eventType, location, eventDateTime, notes } = req.body;

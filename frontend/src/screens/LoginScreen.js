@@ -1,42 +1,53 @@
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text } from 'react-native';
 import AppInput from '../components/AppInput';
 import AppButton from '../components/AppButton';
-import { ROLES } from '../utils/constants';
-import { useAuth } from '../context/AuthContext';
+import { loginUser } from '../services/authService';
 
 export default function LoginScreen({ navigation }) {
-  const { login } = useAuth();
-  const [email, setEmail] = useState('producer@ofts.com');
+  const [email, setEmail] = useState('producer1@ofts.com');
   const [password, setPassword] = useState('123456');
-  const [role, setRole] = useState('Producer');
+  const [loading, setLoading] = useState(false);
+
+  const goByRole = (role) => {
+    if (role === 'producer') {
+      navigation.replace('CreateBatch');
+      return;
+    }
+
+    if (role === 'certifier') {
+      navigation.replace('CertifierReview');
+      return;
+    }
+
+    if (role === 'distributor' || role === 'retailer') {
+      navigation.replace('AddEvent');
+      return;
+    }
+س
+    navigation.replace('Lookup');
+  };
 
   const handleLogin = async () => {
     try {
-      await login(email, password, role);
-      navigation.replace('Dashboard');
+      setLoading(true);
+
+      const result = await loginUser({ email, password });
+
+      Alert.alert('Success', `Welcome ${result.profile.fullName}`);
+      goByRole(result.profile.role);
     } catch (error) {
-      Alert.alert('Login failed', error?.response?.data?.message || 'Please try again');
+      Alert.alert('Login Error', error.message);
+      console.log('LOGIN ERROR:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <Text style={styles.subtitle}>Select your role to continue</Text>
-
-      <Text style={styles.label}>Role</Text>
-      <View style={styles.roleRow}>
-        {ROLES.map((item) => (
-          <Text
-            key={item}
-            style={[styles.rolePill, role === item && styles.rolePillActive]}
-            onPress={() => setRole(item)}
-          >
-            {item}
-          </Text>
-        ))}
-      </View>
+      <Text style={styles.subtitle}>Enter your account details to continue</Text>
 
       <Text style={styles.label}>Email</Text>
       <AppInput
@@ -44,6 +55,7 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setEmail}
         placeholder="your@email.com"
         autoCapitalize="none"
+        keyboardType="email-address"
       />
 
       <Text style={styles.label}>Password</Text>
@@ -54,24 +66,32 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry
       />
 
-      <AppButton title="Login" onPress={handleLogin} />
+      <AppButton
+        title={loading ? 'Logging in...' : 'Login'}
+        onPress={handleLogin}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 34, fontWeight: '800', color: '#0AA329', marginTop: 60, textAlign: 'center' },
-  subtitle: { textAlign: 'center', color: '#777', marginTop: 10, marginBottom: 20 },
-  label: { marginTop: 14, fontWeight: '700', color: '#222' },
-  roleRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
-  rolePill: {
-    borderWidth: 1,
-    borderColor: '#0AA329',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
+  title: {
+    fontSize: 34,
+    fontWeight: '800',
     color: '#0AA329',
+    marginTop: 60,
+    textAlign: 'center',
   },
-  rolePillActive: { backgroundColor: '#0AA329', color: '#fff' },
+  subtitle: {
+    textAlign: 'center',
+    color: '#777',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  label: {
+    marginTop: 14,
+    fontWeight: '700',
+    color: '#222',
+  },
 });

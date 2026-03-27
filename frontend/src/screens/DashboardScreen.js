@@ -24,6 +24,7 @@ export default function DashboardScreen({ navigation }) {
       )}
 
       <AppButton title="Consumer Lookup" onPress={() => navigation.navigate('Lookup')} outline />
+        <AppButton title="View Batch History" onPress={() => navigation.navigate('BatchHistory')} outline/>
       <AppButton title="Logout" onPress={logout} outline />
     </SafeAreaView>
   );
