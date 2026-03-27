@@ -9,12 +9,12 @@ import {
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAF83tNedcZbVXLQfhyur0ooe-wT0JQis',
-  authDomain: 'ofts-3f295.firebaseapp.com',
-  projectId: 'ofts-3f295',
-  storageBucket: 'ofts-3f295.firebasestorage.app',
-  messagingSenderId: '412485014210',
-  appId: '1:412485014210:web:d601b6a316d0376975215b'
+  apiKey: "AIzaSyAF83tNedcZbVXLQfhyur0ooe-w-TOJQis",
+  authDomain: "ofts-3f295.firebaseapp.com",
+  projectId: "ofts-3f295",
+  storageBucket: "ofts-3f295.firebasestorage.app",
+  messagingSenderId: "412485014210",
+  appId: "1:412485014210:web:d601b6a316d0376975215b"
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);

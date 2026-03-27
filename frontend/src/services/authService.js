@@ -3,6 +3,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 
 export async function loginUser({ email, password }) {
+  console.log('USING FIREBASE LOGIN', email);
+
   const cred = await signInWithEmailAndPassword(auth, email, password);
 
   const userRef = doc(db, 'users', cred.user.uid);

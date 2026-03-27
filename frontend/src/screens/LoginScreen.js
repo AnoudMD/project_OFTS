@@ -2,28 +2,25 @@ import React, { useState } from 'react';
 import { Alert, SafeAreaView, StyleSheet, Text } from 'react-native';
 import AppInput from '../components/AppInput';
 import AppButton from '../components/AppButton';
-import { useAuth } from '../context/AuthContext';
+import { loginUser } from '../services/authService';
 
 export default function LoginScreen({ navigation }) {
-  const { login } = useAuth();
   const [email, setEmail] = useState('producer@ofts.com');
   const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
 
   const goByRole = (role) => {
-    const normalizedRole = String(role || '').toLowerCase();
-
-    if (normalizedRole === 'producer') {
+    if (role === 'producer') {
       navigation.replace('CreateBatch');
       return;
     }
 
-    if (normalizedRole === 'certifier') {
+    if (role === 'certifier') {
       navigation.replace('CertifierReview');
       return;
     }
 
-    if (normalizedRole === 'distributor' || normalizedRole === 'retailer') {
+    if (role === 'distributor' || role === 'retailer') {
       navigation.replace('AddEvent');
       return;
     }
@@ -34,22 +31,11 @@ export default function LoginScreen({ navigation }) {
   const handleLogin = async () => {
     try {
       setLoading(true);
-
-      const user = await login(email, password);
-
-      Alert.alert('Success', 'Login successful');
-      goByRole(user?.role);
+      const result = await loginUser({ email, password });
+      Alert.alert('Success', `Welcome ${result.profile.fullName}`);
+      goByRole(result.profile.role);
     } catch (error) {
-      const status = error?.response?.status;
-      const errorMessage =
-        status === 404
-          ? 'Auth endpoint not found. Check EXPO_PUBLIC_API_URL and backend routes.'
-          : error?.response?.data?.message || error?.message || 'Could not login';
-
-      Alert.alert(
-        'Login Error',
-        errorMessage
-      );
+      Alert.alert('Login Error', error.message);
       console.log('LOGIN ERROR:', error);
     } finally {
       setLoading(false);
