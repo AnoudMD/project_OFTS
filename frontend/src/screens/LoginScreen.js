@@ -24,7 +24,7 @@ export default function LoginScreen({ navigation }) {
       navigation.replace('AddEvent');
       return;
     }
-س
+
     navigation.replace('Lookup');
   };
 
