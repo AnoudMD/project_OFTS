@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginApi } from '../api/authApi';
 import { setAuthToken } from '../api/client';
+import { ROLES } from '../utils/constants';
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
 const [user, setUser] = useState(null);
@@ -22,12 +23,29 @@ setLoading(false);
 restore();
 }, []);
 const login = async (email, password, role) => {
-const data = await loginApi({ email, password, role });
+const rolesToTry = role ? [role] : ROLES;
+let data = null;
+let lastError = null;
+
+for (const candidateRole of rolesToTry) {
+try {
+data = await loginApi({ email, password, role: candidateRole });
+break;
+} catch (error) {
+lastError = error;
+}
+}
+
+if (!data) {
+throw lastError || new Error('Invalid credentials');
+}
+
 setToken(data.token);
 setUser(data.user);
 setAuthToken(data.token);
 await AsyncStorage.setItem('token', data.token);
 await AsyncStorage.setItem('user', JSON.stringify(data.user));
+return data.user;
 };
 const logout = async () => {
 setToken(null);

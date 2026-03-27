@@ -2,25 +2,28 @@ import React, { useState } from 'react';
 import { Alert, SafeAreaView, StyleSheet, Text } from 'react-native';
 import AppInput from '../components/AppInput';
 import AppButton from '../components/AppButton';
-import { loginUser } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('producer1@ofts.com');
+  const { login } = useAuth();
+  const [email, setEmail] = useState('producer@ofts.com');
   const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
 
   const goByRole = (role) => {
-    if (role === 'producer') {
+    const normalizedRole = String(role || '').toLowerCase();
+
+    if (normalizedRole === 'producer') {
       navigation.replace('CreateBatch');
       return;
     }
 
-    if (role === 'certifier') {
+    if (normalizedRole === 'certifier') {
       navigation.replace('CertifierReview');
       return;
     }
 
-    if (role === 'distributor' || role === 'retailer') {
+    if (normalizedRole === 'distributor' || normalizedRole === 'retailer') {
       navigation.replace('AddEvent');
       return;
     }
@@ -32,12 +35,21 @@ export default function LoginScreen({ navigation }) {
     try {
       setLoading(true);
 
-      const result = await loginUser({ email, password });
+      const user = await login(email, password);
 
-      Alert.alert('Success', `Welcome ${result.profile.fullName}`);
-      goByRole(result.profile.role);
+      Alert.alert('Success', 'Login successful');
+      goByRole(user?.role);
     } catch (error) {
-      Alert.alert('Login Error', error.message);
+      const status = error?.response?.status;
+      const errorMessage =
+        status === 404
+          ? 'Auth endpoint not found. Check EXPO_PUBLIC_API_URL and backend routes.'
+          : error?.response?.data?.message || error?.message || 'Could not login';
+
+      Alert.alert(
+        'Login Error',
+        errorMessage
+      );
       console.log('LOGIN ERROR:', error);
     } finally {
       setLoading(false);
