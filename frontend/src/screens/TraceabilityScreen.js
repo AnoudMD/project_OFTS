@@ -20,8 +20,11 @@ export default function TraceabilityScreen({ route }) {
   }
 
   const batchId = batch.id || batch.batchId || 'N/A';
-  const certificationStatus =
-    certificate?.status || batch.status || 'unknown';
+  const certificationStatus = certificate?.status || batch.status || 'unknown';
+  const blockchainStatus = certificate?.blockchainStatus || 'pending';
+  const ipfsCid = certificate?.ipfsCid || 'N/A';
+  const txHash = certificate?.txHash || 'N/A';
+  const network = certificate?.network || 'polygon-amoy';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,6 +105,28 @@ export default function TraceabilityScreen({ route }) {
               {certificate.notes}
             </Text>
           )}
+
+          <Text style={styles.section}>Verification Details</Text>
+
+          <Text style={styles.row}>
+            <Text style={styles.key}>IPFS CID: </Text>
+            {ipfsCid}
+          </Text>
+
+          <Text style={styles.row}>
+            <Text style={styles.key}>Blockchain Status: </Text>
+            {blockchainStatus}
+          </Text>
+
+          <Text style={styles.row}>
+            <Text style={styles.key}>Transaction Hash: </Text>
+            {txHash}
+          </Text>
+
+          <Text style={styles.row}>
+            <Text style={styles.key}>Network: </Text>
+            {network}
+          </Text>
         </View>
 
         <Text style={styles.section}>Supply Chain Events</Text>

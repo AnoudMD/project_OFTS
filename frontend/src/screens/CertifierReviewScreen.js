@@ -10,6 +10,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
+import { uploadCertificateToIpfsApi } from '../api/ipfsApi';
 import AppButton from '../components/AppButton';
 import AppInput from '../components/AppInput';
 import StatusBadge from '../components/StatusBadge';
@@ -57,6 +58,7 @@ export default function CertifierReviewScreen() {
         return;
       }
 
+      // 1) approve batch in Firestore
       await updateDoc(doc(db, 'batches', batchId), {
         status: 'approved',
         reviewedBy: currentUser.uid,
@@ -64,7 +66,39 @@ export default function CertifierReviewScreen() {
         rejectionReason: '',
       });
 
-      Alert.alert('Approved', `${batchId} approved successfully`);
+      // 2) find related certificate by batchId
+      const certQuery = query(
+        collection(db, 'certificates'),
+        where('batchId', '==', batchId)
+      );
+
+      const certSnap = await getDocs(certQuery);
+
+      // 3) if certificate exists, upload it automatically to IPFS
+      if (!certSnap.empty) {
+        const certificateDoc = certSnap.docs[0];
+        const certificateId = certificateDoc.id;
+
+        try {
+          await uploadCertificateToIpfsApi(certificateId);
+          Alert.alert(
+            'Approved',
+            `${batchId} approved successfully and uploaded to IPFS, and recorded on blockchain`
+          );
+        } catch (ipfsError) {
+          console.log('IPFS UPLOAD ERROR:', ipfsError);
+          Alert.alert(
+            'Approved with warning',
+            `${batchId} approved, but IPFS upload failed`
+          );
+        }
+      } else {
+        Alert.alert(
+          'Approved',
+          `${batchId} approved successfully, but no related certificate was found`
+        );
+      }
+
       loadBatches();
     } catch (error) {
       Alert.alert('Error', error.message || 'Could not approve batch');
