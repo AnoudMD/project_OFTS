@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import ProducerDashboardScreen from '../screens/ProducerDashboardScreen';
 import LoginScreen from '../screens/LoginScreen';
 import ConsumerLookupScreen from '../screens/ConsumerLookupScreen';
 import CreateBatchScreen from '../screens/CreateBatchScreen';
@@ -63,7 +64,9 @@ export default function AppNavigator() {
           component={CertifierReviewScreen}
           options={{ title: 'Review Batches' }}
         />
+        <Stack.Screen name="ProducerDashboard" component={ProducerDashboardScreen} />
       </Stack.Navigator>
+
     </NavigationContainer>
   );
 }

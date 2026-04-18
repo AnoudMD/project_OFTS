@@ -42,6 +42,7 @@ export default function QrScannerScreen({ navigation }) {
         farmName: traceData.batch.farmName,
         scannedAt: new Date().toISOString(),
       });
+
       navigation.replace('Traceability', { traceData });
     } catch (error) {
       Alert.alert(
@@ -57,8 +58,10 @@ export default function QrScannerScreen({ navigation }) {
   if (hasPermission === null) {
     return (
       <SafeAreaView style={styles.center}>
-        <ActivityIndicator size="large" color="#0AA329" />
-        <Text style={{ marginTop: 12, color: '#555' }}>Requesting camera permission...</Text>
+        <ActivityIndicator size="large" color="#16A34A" />
+        <Text style={{ marginTop: 12, color: '#555' }}>
+          Requesting camera permission...
+        </Text>
       </SafeAreaView>
     );
   }
@@ -67,7 +70,9 @@ export default function QrScannerScreen({ navigation }) {
     return (
       <SafeAreaView style={styles.center}>
         <Text style={styles.errorText}>Camera permission denied.</Text>
-        <Text style={styles.subText}>Please enable camera access in settings.</Text>
+        <Text style={styles.subText}>
+          Please enable camera access in settings.
+        </Text>
       </SafeAreaView>
     );
   }
@@ -81,16 +86,20 @@ export default function QrScannerScreen({ navigation }) {
       >
         <View style={styles.overlay}>
           <View style={styles.topOverlay} />
+
           <View style={styles.middleRow}>
             <View style={styles.sideOverlay} />
+
             <View style={styles.scanBox}>
               <View style={[styles.corner, styles.topLeft]} />
               <View style={[styles.corner, styles.topRight]} />
               <View style={[styles.corner, styles.bottomLeft]} />
               <View style={[styles.corner, styles.bottomRight]} />
             </View>
+
             <View style={styles.sideOverlay} />
           </View>
+
           <View style={styles.bottomOverlay}>
             {loading ? (
               <ActivityIndicator size="large" color="#fff" />
@@ -99,6 +108,7 @@ export default function QrScannerScreen({ navigation }) {
                 {scanned ? 'Processing...' : 'Point camera at a QR code'}
               </Text>
             )}
+
             {scanned && !loading && (
               <TouchableOpacity
                 style={styles.rescanBtn}
@@ -120,37 +130,101 @@ const CORNER_THICKNESS = 4;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20, backgroundColor: '#fff' },
+
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+
   camera: { flex: 1 },
+
   overlay: { flex: 1 },
+
   topOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' },
+
   middleRow: { flexDirection: 'row', height: BOX_SIZE },
+
   sideOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' },
+
   scanBox: { width: BOX_SIZE, height: BOX_SIZE },
+
   bottomOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.6)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  hint: { color: '#fff', fontSize: 16, fontWeight: '600', marginBottom: 16 },
+
+  hint: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+
+  /* ✅ اللون الموحد */
   rescanBtn: {
-    backgroundColor: '#0AA329',
+    backgroundColor: '#16A34A',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
   },
-  rescanText: { color: '#fff', fontWeight: '700', fontSize: 16 },
-  errorText: { fontSize: 18, fontWeight: '700', color: '#333', textAlign: 'center' },
-  subText: { color: '#666', textAlign: 'center', marginTop: 8 },
+
+  rescanText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+
+  errorText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
+    textAlign: 'center',
+  },
+
+  subText: {
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+
+  /* ✅ لون زوايا السكان */
   corner: {
     position: 'absolute',
     width: CORNER_SIZE,
     height: CORNER_SIZE,
-    borderColor: '#0AA329',
+    borderColor: '#16A34A',
   },
-  topLeft: { top: 0, left: 0, borderTopWidth: CORNER_THICKNESS, borderLeftWidth: CORNER_THICKNESS },
-  topRight: { top: 0, right: 0, borderTopWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS },
-  bottomLeft: { bottom: 0, left: 0, borderBottomWidth: CORNER_THICKNESS, borderLeftWidth: CORNER_THICKNESS },
-  bottomRight: { bottom: 0, right: 0, borderBottomWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS },
+
+  topLeft: {
+    top: 0,
+    left: 0,
+    borderTopWidth: CORNER_THICKNESS,
+    borderLeftWidth: CORNER_THICKNESS,
+  },
+
+  topRight: {
+    top: 0,
+    right: 0,
+    borderTopWidth: CORNER_THICKNESS,
+    borderRightWidth: CORNER_THICKNESS,
+  },
+
+  bottomLeft: {
+    bottom: 0,
+    left: 0,
+    borderBottomWidth: CORNER_THICKNESS,
+    borderLeftWidth: CORNER_THICKNESS,
+  },
+
+  bottomRight: {
+    bottom: 0,
+    right: 0,
+    borderBottomWidth: CORNER_THICKNESS,
+    borderRightWidth: CORNER_THICKNESS,
+  },
 });

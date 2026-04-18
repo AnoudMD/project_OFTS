@@ -1,26 +1,43 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-export default function AppButton({ title, onPress, outline = false }) {
-return (
-<TouchableOpacity onPress={onPress} style={[styles.btn, outline &&
-styles.outline]}>
-<Text style={[styles.text, outline && styles.outlineText]}>{title}</Text>
-</TouchableOpacity>
-);
+import { COLORS } from '../theme/colors';
+
+export default function AppButton({ title, onPress, outline, style }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.button,
+        outline && styles.outline,
+        style,
+      ]}
+    >
+      <Text style={[styles.text, outline && styles.outlineText]}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
 }
+
 const styles = StyleSheet.create({
-btn: {
-backgroundColor: '#0AA329',
-paddingVertical: 14,
-borderRadius: 12,
-alignItems: 'center',
-marginTop: 12,
-},
-outline: {
-backgroundColor: '#fff',
-borderWidth: 1,
-borderColor: '#0AA329',
-},
-text: { color: '#fff', fontWeight: '700', fontSize: 16 },
-outlineText: { color: '#0AA329' },
+  button: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  text: {
+    color: COLORS.white,
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+  },
+  outlineText: {
+    color: COLORS.primary,
+  },
 });

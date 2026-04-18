@@ -1,17 +1,24 @@
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
+import { COLORS } from '../theme/colors';
+
 export default function AppInput(props) {
-return <TextInput placeholderTextColor="#999" style={styles.input}
-{...props} />;
+  return (
+    <TextInput
+      {...props}
+      placeholderTextColor="#9CA3AF"
+      style={[styles.input, props.style]}
+    />
+  );
 }
+
 const styles = StyleSheet.create({
-input: {
-backgroundColor: '#F5F5F5',
-borderRadius: 12,
-paddingHorizontal: 14,
-paddingVertical: 14,
-marginTop: 10,
-borderWidth: 1,
-borderColor: '#E4E4E4',
-},
+  input: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 14,
+    padding: 14,
+    backgroundColor: COLORS.white,
+    marginTop: 6,
+  },
 });
