@@ -1,25 +1,62 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Alert,
+} from 'react-native';
 import AppInput from '../components/AppInput';
 import AppButton from '../components/AppButton';
-import logo from '../../assets/logo.jpg'; // تأكدي من الامتداد
+import logo from '../../assets/logo.jpg';
+import client from '../api/client';
 
 export default function ConsumerLookupScreen({ navigation }) {
   const [batchId, setBatchId] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async () => {
+    try {
+      const trimmedBatchId = batchId.trim();
+
+      if (!trimmedBatchId) {
+        Alert.alert('Missing Batch ID', 'Please enter a batch ID');
+        return;
+      }
+
+      setLoading(true);
+
+      const response = await client.get(`/trace/${trimmedBatchId}`);
+      const traceData = response?.data;
+
+      if (!traceData || !traceData.batch) {
+        Alert.alert('Not Found', 'No traceability data found for this batch');
+        return;
+      }
+
+      navigation.navigate('Traceability', { traceData });
+    } catch (error) {
+      console.log('LOOKUP ERROR:', error?.response?.data || error.message);
+
+      Alert.alert(
+        'Lookup Failed',
+        error?.response?.data?.message || 'Could not fetch traceability data'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.card}>
-
-        {/* اللوقو */}
         <Image source={logo} style={styles.logo} />
 
-        {/* العنوان */}
         <Text style={styles.title}>
           Organic Food Traceability System
         </Text>
 
-        {/* زر QR */}
         <AppButton
           title="Scan QR Code"
           onPress={() => navigation.navigate('QrScanner')}
@@ -27,22 +64,17 @@ export default function ConsumerLookupScreen({ navigation }) {
 
         <Text style={styles.or}>or enter batch ID manually</Text>
 
-        {/* input */}
         <AppInput
           placeholder="BATCH-XXXXXXXX"
           value={batchId}
           onChangeText={setBatchId}
         />
 
-        {/* زر البحث */}
         <AppButton
-          title="Search"
-          onPress={() => {
-            // نفس كودك القديم (لا تغيرينه)
-          }}
+          title={loading ? 'Searching...' : 'Search'}
+          onPress={handleSearch}
         />
 
-        {/* روابط */}
         <Text
           style={styles.link}
           onPress={() => navigation.navigate('BatchHistory')}
@@ -56,7 +88,6 @@ export default function ConsumerLookupScreen({ navigation }) {
         >
           Supply Chain Login
         </Text>
-
       </View>
     </SafeAreaView>
   );
@@ -99,7 +130,7 @@ const styles = StyleSheet.create({
 
   link: {
     textAlign: 'center',
-    color: '#16A34A', // اللون الموحد
+    color: '#16A34A',
     marginTop: 10,
     fontWeight: '700',
   },
