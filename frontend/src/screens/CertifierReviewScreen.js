@@ -18,8 +18,10 @@ import {
   orderBy,
   updateDoc,
   doc,
+  where,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
+import client from '../api/client';
 
 export default function CertifierReviewScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState('pending');
@@ -86,8 +88,49 @@ export default function CertifierReviewScreen({ navigation }) {
         certifiedAt: new Date().toISOString(),
       });
 
-      Alert.alert('Success', 'Batch approved successfully');
-      loadBatches();
+      const certQuery = query(
+        collection(db, 'certificates'),
+        where('batchId', '==', batchId)
+      );
+
+      const certSnapshot = await getDocs(certQuery);
+
+      if (certSnapshot.empty) {
+        Alert.alert(
+          'Approved with warning',
+          `${batchId} approved, but no linked certificate was found`
+        );
+        await loadBatches();
+        return;
+      }
+
+      const certificateDoc = certSnapshot.docs[0];
+      const certificateId = certificateDoc.id;
+
+      try {
+        const response = await client.post(
+          `/ipfs/upload-certificate/${certificateId}`
+        );
+
+        const result = response?.data || {};
+
+        Alert.alert(
+          'Approved',
+          `${batchId} approved successfully and recorded.\n\nIPFS CID: ${result.cid || 'Done'}\nTX Hash: ${result.txHash || 'Done'}`
+        );
+      } catch (apiError) {
+        console.log(
+          'IPFS/BLOCKCHAIN API ERROR:',
+          apiError?.response?.data || apiError.message
+        );
+
+        Alert.alert(
+          'Approved with warning',
+          `${batchId} approved, but IPFS / blockchain failed`
+        );
+      }
+
+      await loadBatches();
     } catch (error) {
       console.log('APPROVE ERROR:', error);
       Alert.alert('Error', 'Could not approve batch');
