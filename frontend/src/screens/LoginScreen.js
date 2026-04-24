@@ -43,8 +43,12 @@ export default function LoginScreen({ navigation }) {
 
       } else if (userRole === 'certifier') {
         navigation.replace('CertifierReview');
-      } else if (userRole === 'distributor' || userRole === 'retailer') {
-        navigation.replace('AddEvent');
+      } else if (userRole === 'distributor') {
+  navigation.replace('DistributorEvent');
+
+} else if (userRole === 'retailer') {
+  navigation.replace('RetailerEvent');
+
       } else {
         navigation.replace('Lookup');
       }

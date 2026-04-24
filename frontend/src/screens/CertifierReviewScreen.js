@@ -199,13 +199,11 @@ export default function CertifierReviewScreen({ navigation }) {
       <View style={styles.header}>
         <View>
           <Text style={styles.loggedText}>Logged in as</Text>
-          <Text style={styles.roleText}>🔍 Certifier</Text>
+          <Text style={styles.roleText}> Certifier</Text>
           <Text style={styles.emailText}>{user?.email || 'No email'}</Text>
         </View>
 
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-          <Text style={styles.logoutIcon}>↩</Text>
-        </TouchableOpacity>
+        
       </View>
 
       <View style={styles.tabsWrapper}>

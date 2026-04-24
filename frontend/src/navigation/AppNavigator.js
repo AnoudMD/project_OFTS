@@ -6,12 +6,15 @@ import ProducerDashboardScreen from '../screens/ProducerDashboardScreen';
 import LoginScreen from '../screens/LoginScreen';
 import ConsumerLookupScreen from '../screens/ConsumerLookupScreen';
 import CreateBatchScreen from '../screens/CreateBatchScreen';
-import AddEventScreen from '../screens/AddEventScreen';
+
 import TraceabilityScreen from '../screens/TraceabilityScreen';
 import BatchHistoryScreen from '../screens/BatchHistoryScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import CertifierReviewScreen from '../screens/CertifierReviewScreen';
 import QrScannerScreen from '../screens/QrScannerScreen';
+
+import DistributorEventScreen from '../screens/DistributorEventScreen';
+import RetailerEventScreen from '../screens/RetailerEventScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,17 +57,25 @@ export default function AppNavigator() {
           component={CreateBatchScreen}
           options={{ title: 'Create Product Batch' }}
         />
-        <Stack.Screen
-          name="AddEvent"
-          component={AddEventScreen}
-          options={{ title: 'Add Supply Chain Event' }}
-        />
+        
         <Stack.Screen
           name="CertifierReview"
           component={CertifierReviewScreen}
           options={{ title: 'Review Batches' }}
         />
         <Stack.Screen name="ProducerDashboard" component={ProducerDashboardScreen} />
+
+<Stack.Screen
+  name="DistributorEvent"
+  component={DistributorEventScreen}
+  options={{ title: 'Distributor Event' }}
+/>
+
+<Stack.Screen
+  name="RetailerEvent"
+  component={RetailerEventScreen}
+  options={{ title: 'Retailer Event' }}
+/>
       </Stack.Navigator>
 
     </NavigationContainer>
