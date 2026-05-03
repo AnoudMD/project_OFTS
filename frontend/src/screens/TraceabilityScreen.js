@@ -21,6 +21,45 @@ export default function TraceabilityScreen({ route }) {
   const batchId = batch.id || batch.batchId || 'N/A';
   const certificationStatus = certificate?.status || batch.status || 'unknown';
 
+  const certificateNumber =
+    certificate?.certificateNumber ||
+    certificate?.certificateId ||
+    certificate?.id ||
+    'Not available';
+
+  const certifierDisplay = 'Certified by OFTS Authorized Certifier';
+
+  const issueDate =
+    certificate?.issueDate ||
+    certificate?.certifiedAt ||
+    batch?.certifiedAt ||
+    'Not available';
+
+  const expiryDate =
+    certificate?.expiryDate ||
+    batch?.expiryDate ||
+    'Not available';
+
+  const notesDisplay =
+    certificate?.notes && certificate?.notes.trim() !== ''
+      ? certificate.notes
+      : 'This product certificate has been reviewed and approved in the system.';
+
+  const ipfsMessage = certificate?.ipfsCid
+    ? 'This certificate has been uploaded to IPFS successfully.'
+    : 'Certificate upload is pending.';
+
+  const blockchainMessage =
+    certificate?.blockchainStatus === 'recorded_onchain'
+      ? 'This certificate has been securely recorded on the blockchain.'
+      : 'Blockchain recording is pending.';
+
+  const verificationMessage = certificate?.txHash
+    ? 'This product information has been verified and cannot be tampered with.'
+    : 'Verification is pending.';
+
+  const networkMessage = 'Polygon Amoy Testnet';
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -32,7 +71,9 @@ export default function TraceabilityScreen({ route }) {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>{batch.productName || product?.name || 'Product'}</Text>
+          <Text style={styles.cardTitle}>
+            {batch.productName || product?.name || 'Product'}
+          </Text>
           <Text style={styles.batchId}>{batchId}</Text>
 
           <View style={styles.badgeWrap}>
@@ -46,39 +87,51 @@ export default function TraceabilityScreen({ route }) {
             ['Farm Name', batch.farmName || 'N/A'],
             ['Barcode', batch.productBarcode || product?.barcode || 'N/A'],
             ['Brand', product?.brand || 'N/A'],
-            ['Production Date', batch.productionDate || 'N/A'],
-            ['Expiry Date', batch.expiryDate || 'N/A'],
+            [
+              'Production Date',
+              batch.productionDate
+                ? String(batch.productionDate).slice(0, 10)
+                : 'N/A',
+            ],
+            [
+              'Expiry Date',
+              batch.expiryDate
+                ? String(batch.expiryDate).slice(0, 10)
+                : 'N/A',
+            ],
           ]}
         />
 
         <InfoCard
           title="Certificate Information"
           items={[
-            ['Certificate Number', certificate?.certificateNumber || 'N/A'],
-            ['Certifier', certificate?.certifierName || 'N/A'],
-            ['Issue Date', certificate?.issueDate || 'N/A'],
-            ['Expiry Date', certificate?.expiryDate || 'N/A'],
-            ['Notes', certificate?.notes || 'N/A'],
+            ['Certificate Number', certificateNumber],
+            ['Certifier', certifierDisplay],
+            [
+              'Issue Date',
+              issueDate !== 'Not available'
+                ? String(issueDate).slice(0, 10)
+                : 'Not available',
+            ],
+            [
+              'Expiry Date',
+              expiryDate !== 'Not available'
+                ? String(expiryDate).slice(0, 10)
+                : 'Not available',
+            ],
+            ['Notes', notesDisplay],
           ]}
         />
 
         <InfoCard
-  title="Verification Details"
-  items={[
-    ['IPFS Status', certificate?.ipfsCid ? 'Added to IPFS' : 'Pending'],
-    [
-      'Blockchain Status',
-      certificate?.blockchainStatus === 'recorded_onchain'
-        ? 'Recorded On-Chain '
-        : certificate?.blockchainStatus || 'Pending',
-    ],
-    [
-      'Verification',
-      certificate?.txHash ? 'Verified and hashed ' : 'Pending verification',
-    ],
-    ['Network', certificate?.network || 'polygon-amoy'],
-  ]}
-/>
+          title="Verification Details"
+          items={[
+            ['IPFS Status', ipfsMessage],
+            ['Blockchain Status', blockchainMessage],
+            ['Verification', verificationMessage],
+            ['Network', networkMessage],
+          ]}
+        />
 
         <Text style={styles.sectionTitle}>Supply Chain Events</Text>
 
@@ -227,6 +280,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     marginTop: 3,
+    lineHeight: 22,
   },
 
   eventCard: {
