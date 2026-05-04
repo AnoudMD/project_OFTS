@@ -87,6 +87,9 @@ router.post('/upload-certificate/:certificateId', async (req, res) => {
     await certRef.update({
       txHash: onChainResult.txHash,
       blockchainStatus: 'recorded_onchain',
+      status: 'approved',
+      network: 'polygon-amoy',
+      issueDate: new Date().toISOString(),
     });
 
     return res.status(200).json({
